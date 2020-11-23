@@ -1,16 +1,9 @@
 const inquirer = require("inquirer");
+const fs = require("fs");
 const generateMarkdown = require("./utils/generateMarkdown");
 
 // array of questions for user
 const questions = [
-  {
-    type: "input",
-    name: "name",
-    message: "What is your name?",
-    validate: (nameInput) => {
-      return nameInput ? true : (console.log("Please enter your name"), false);
-    },
-  },
   {
     type: "input",
     name: "username",
@@ -53,7 +46,7 @@ const questions = [
   },
 
   {
-    type: "input",
+    type: "editor",
     name: "install",
     message: "What are the installation instructions?",
     validate: (instInput) => {
@@ -64,19 +57,19 @@ const questions = [
   },
   {
     type: "input",
-    name: "usage",
-    message: "How is the application to be used?",
+    name: "test",
+    message: "What command is used to test the project?",
     validate: (usageInput) => {
       return usageInput
         ? true
-        : (console.log("Please enter usage instructions"), false);
+        : (console.log("Please enter command to test project"), false);
     },
   },
   {
     type: "checkbox",
     name: "license",
     message: "which license is going to be used, if any",
-    choices: ["MIT License", "GNU GPLv3"],
+    choices: ["MIT", "GPLv3", "AGPL"],
     validate: (licenseInput) => {
       return licenseInput ? true : (console.log("Select a license"), false);
     },
@@ -84,25 +77,24 @@ const questions = [
   {
     type: "input",
     name: "contribution",
-    message: "What are going to be your contribution guidelines",
-    validate: (contrInput) => {
-      return contrInput
-        ? true
-        : (console.log(
-            "Please put some guidelines for how others can contribute"
-          ),
-          false);
-    },
+    message: "Who has contributed to your project?",
   },
 ];
 
 // function to write README file
-function writeToFile(fileName, data) {}
+function writeToFile(fileName, data) {
+  fs.writeFile(fileName, data, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log("File has been generated");
+  });
+}
 
 // function to initialize program
 function init() {
   return inquirer.prompt(questions).then((answers) => {
-    console.log(answers);
+    writeToFile("Pro-ProjectREADME.md", generateMarkdown(answers));
   });
 }
 
